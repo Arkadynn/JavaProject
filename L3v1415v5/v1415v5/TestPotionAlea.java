@@ -22,10 +22,10 @@ public class TestPotionAlea {
 				ipArene = args[1];
 			}
 			
-			Element anduril = new Potion("Anduril", 20, 5, 5, 1, 2);
+			Element anduril = new Potion("Anduril", 0, 0, -1, 0, 0);
 	
 			Random r = new Random();
-			new Console(anduril, r.nextInt(100), r.nextInt(100), port, ipArene);
+			new Console(anduril, 40, 40, port, ipArene);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

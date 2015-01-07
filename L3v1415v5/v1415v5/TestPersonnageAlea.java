@@ -13,6 +13,23 @@ public class TestPersonnageAlea {
 
 	public static void main(String[] args) {
 		
+//		try {
+//			int port = 5099; // par defaut, 5099
+//			if (args.length > 0) {
+//				port = Integer.parseInt(args[0]);
+//			}
+//			
+//			String ipArene = "localhost"; // par défaut, localhost
+//			if (args.length > 1) { 
+//				ipArene = args[1];
+//			}
+//
+//			Random r = new Random();
+//			Personnage bidule = new Personnage("Truc", r.nextInt(35),r.nextInt(35), 25, 1, 7);
+//			new Console(bidule, r.nextInt(100), r.nextInt(100), port, ipArene);
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}
 		try {
 			int port = 5099; // par defaut, 5099
 			if (args.length > 0) {
@@ -23,10 +40,10 @@ public class TestPersonnageAlea {
 			if (args.length > 1) { 
 				ipArene = args[1];
 			}
-
-			Random r = new Random();
-			Personnage bidule = new Personnage("Truc", r.nextInt(35),r.nextInt(35), 25, 1, 7);
-			new Console(bidule, r.nextInt(100), r.nextInt(100), port, ipArene);
+			
+			Personnage bidule = new Personnage("Bidule", 40, 0, 1, 4, 0);
+			
+			new Console(bidule, 40, 40, port, ipArene);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
