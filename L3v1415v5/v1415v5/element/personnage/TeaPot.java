@@ -16,7 +16,7 @@ public class TeaPot extends Personnage {
 	private static final long serialVersionUID = 1L;
 
 	public TeaPot(String nom) {
-		super(nom, 0, 99, 0, 1, 0);
+		super(nom, 0, 99, 1, 1, 0);
 	}
 
 	@Override
