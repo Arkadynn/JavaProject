@@ -10,9 +10,9 @@ import element.Potion;
  */
 public class LeverLaLance extends Potion {
 
-	public LeverLaLance() {
-		super("Lever La Lance!", 25, 25);
-		// TODO Auto-generated constructor stub
-	}
+	private static final long serialVersionUID = 4895455296441989247L;
 
+	public LeverLaLance(String nom) {
+		super(nom, 25, 25, -10, -1, 2);
+	}
 }

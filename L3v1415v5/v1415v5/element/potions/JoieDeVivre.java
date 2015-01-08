@@ -10,8 +10,9 @@ import element.Potion;
  */
 public class JoieDeVivre extends Potion {
 
-	public JoieDeVivre() {
-		super("Joie de Vivre", 0, 50);
-	}
+	private static final long serialVersionUID = 3147366421941177710L;
 
+	public JoieDeVivre(String nom) {
+		super(nom, 0, 50, -10, 0, -5);
+	}
 }

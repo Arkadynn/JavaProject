@@ -10,9 +10,9 @@ import element.Potion;
  */
 public class MortHAL extends Potion {
 
-	public MortHAL() {
-		super("Neuf vies...", 0, 0);
-		this.ajouterCaract("assassine", 1);
-	}
+	private static final long serialVersionUID = -2589704733447119434L;
 
+	public MortHAL(String nom) {
+		super(nom, 10, 10, -99, 2, 0);
+	}
 }

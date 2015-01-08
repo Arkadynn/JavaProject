@@ -33,54 +33,54 @@ public class TeaPot extends Personnage {
 			Hashtable<String, Integer> currentCaracs = current.getControleur().getElement().getCaract();
 
 			if (voisins.get(i).getControleur().getElement() instanceof Personnage) {
-				// TODO Traitement si c'est un personnage
+				// Traitement si c'est un personnage
 				if (!this.getEquipe().contains(i) && this.getLeader() != i) {
-					// TODO Un ennemi
+					// Un ennemi
 					ennemis.put(i, current);
 				} else {
-					// TODO c'est un allier
+					// Un allie
 					allies.put(i, current);
 				}
 			} else {
-				// TODO Traitement si c'est une potion
+				// Traitement si c'est une potion
 
 				if (currentCaracs.get("charisme") < 0) {
-					//					on perdrait trop de charisme
+					// on perdrait trop de charisme
 					continue;
 				}
 
 				if (currentCaracs.get("hp") + getCaract("hp") <= 0) {
-					//					La potion nous ferait mourrir
+					// La potion nous ferait mourrir
 					continue;
 				}
 
 				if (currentCaracs.get("vitesse") < 0) {
 					if (getCaract("vitesse") == 1) {
-						//						 On ne veut pas être immobile
+						// On ne veut pas être immobile
 						continue;
 					} else {
 						if (currentCaracs.get("force") + (currentCaracs.get("defense") * 10/6) + currentCaracs.get("hp") <= 90) {
-							//							 La potion ne vaut pas le coup
+							// La potion ne vaut pas le coup
 							continue;
 						} else {
 							potions.put(i, current);
 						}
 					}
 				} else if (currentCaracs.get("vitesse") > 0) {
-					//					 Semble être une bonne potion mais : 
-					//					 en a t'on besoin
+					// Semble être une bonne potion mais : 
+					// en a t'on besoin ?
 					if (getCaract("vitesse") == 4) {
-						//						Non
+						// Non
 						continue;
 					} else {
-						//						Oui
+						// Oui
 						if (currentCaracs.get("hp") < -20) {
-							//							La potion nous ferait mourrir
+							// Mais la potion nous ferait trop de degats pour etre acceptable
 							continue;
 						}
 
 						if (currentCaracs.get("force") + getCaract("force") <= -15) {
-							//							potentiellement bon, puisque nous avons atténué les effets négatifs par notre absance de force
+							// potentiellement bon, puisque nous avons atténué les effets négatifs par notre absance de force
 							if (currentCaracs.get("charisme") + currentCaracs.get("defense") * 10/6 + currentCaracs.get("hp") < -30) {
 								// Trop de malus malgrès le malus compensé de force
 								continue;
@@ -88,7 +88,7 @@ public class TeaPot extends Personnage {
 						}
 
 						if ((currentCaracs.get("defense") + getCaract("defense"))*10/6 <= -15) {
-							//							potentiellement bon, puisque nous avons atténué les effets négatifs par notre absance de force
+							// potentiellement bon, puisque nous avons atténué les effets négatifs par notre absance de force
 							if (currentCaracs.get("charisme") + currentCaracs.get("force") + currentCaracs.get("hp") < -30) {
 								// Trop de malus malgrès le malus compensé de force
 								continue;
@@ -101,21 +101,45 @@ public class TeaPot extends Personnage {
 			}
 		}
 
-		Point pointOptimal = new Point();
-		boolean first = true;
-		int refPot = 0;
-		double distance = 10000;
+		int refPot = 0; // reference de la potion a aller chercher, si aucune, deplacement aléatoire avec le 0 
+		double distance = 10000; // distance de l'objectif, utilisé pour selectionner la meilleur cible selon les critères courrant
+		double dist; // varible temporaire de calcul stockant la distance a l'objet courrant
 
-		if (getCharisme() != 100) {
-			// On cherche a avoir 100 de charisme
-
-			double dist;
-
-			for (Integer i : potions.keySet()) {
-				Potion current = (Potion)potions.get(i).getControleur().getElement();
-
+		// On cherche a optimiser ses stats en buvant des potions
+		for (Integer i : potions.keySet()) {
+			Potion current = (Potion)potions.get(i).getControleur().getElement();
+			// On cherche d'abord à avoir le meilleur charisme possible
+			if (getCharisme() != 100) {
 				if (current.getCharisme() + getCharisme() >= 100) {
-					dist = ve.getPoint().distance(potions.get(i).getPoint());
+					dist = ve.getPoint()
+							.distance(potions.get(i).getPoint());
+					if (dist < distance) {
+						distance = dist;
+						refPot = i;
+					}
+				}
+			} else if (getHP() != 100) { // puis on maximise les hp pour mieux resister
+				if (current.getCharisme() > 0 && current.getHP() > 0) {
+					dist = ve.getPoint()
+							.distance(potions.get(i).getPoint());
+					if (dist < distance) {
+						distance = dist;
+						refPot = i;
+					}
+				}
+			} else if (getVitesse() != 4) { // puis la vitesse pour fuire et rattraper nos proies
+				if (current.getCharisme() > 0 && current.getVitesse() > 0) {
+					dist = ve.getPoint()
+							.distance(potions.get(i).getPoint());
+					if (dist < distance) {
+						distance = dist;
+						refPot = i;
+					}
+				}
+			} else if (getForce() != 100) { // et enfin la force, car on sait jamais
+				if (current.getCharisme() > 0 && current.getVitesse() > 0 && current.getForce() > 0) {
+					dist = ve.getPoint()
+							.distance(potions.get(i).getPoint());
 					if (dist < distance) {
 						distance = dist;
 						refPot = i;
@@ -124,73 +148,70 @@ public class TeaPot extends Personnage {
 			}
 		}
 
-		if (distance != 10000) { // TODO GERER LES POTIONS AUTRE QUE CHARISME
-			// se diriger vers la potion pour la rammasser
+		// Recherche d'un ennemi menacant
+		Point pointOptimal = new Point();
+		boolean first = true;
+		
+		for (Integer i : ennemis.keySet()) {
+			Personnage current = (Personnage)ennemis.get(i).getControleur().getElement();
+			
+			// il est dangereux pour notre santé, on a que 50% de chance de le convertir
+			// ou on ne pourra pas faire de coup d'état
+			if (current.getForce() >= this.getCharisme() || current.getCharisme() > this.getCharisme()) {
+				Point pM = ennemis.get(i).getPoint(); // Emplacement de l'ennemi
+				Point pE = ve.getPoint(); // Emplacement de notre personnage
+
+				Point dest = new Point (
+						(pM.x < pE.x) ? -1 : 1,
+								(pM.y < pE.y) ? -1 : 1
+						); // vecteur unitaire de fuite
+				dest.setLocation(dest.x * getVitesse(), dest.y * getVitesse()); // on l'adatpe a notre vitesse pour parcourir le maximum de cases
+				dest.translate(pM.x, pM.y); // on calcul le point de chute théorique
+
+				// si c'est la premiere distance --> simple affectation
+				if (first) {
+					pointOptimal = dest;
+					first = false;
+				} else { // sinon moyenne avec le point de chute precedent pour fuire a la fois les deux menaces
+					pointOptimal = new Point (
+							(pointOptimal.x + dest.x) / 2,
+							(pointOptimal.y + dest.y) / 2
+							);
+
+				}
+			} else {
+				// Envisager un Free Hug (tentative de charme =D)
+
+				Point pM = ennemis.get(i).getPoint();
+				Point pE = ve.getPoint();
+
+				Point dest = new Point (
+						(pM.x < pE.x) ? 1 : -1,
+								(pM.y < pE.y) ? 1 : -1
+						);
+				dest.setLocation(dest.x * getVitesse(), dest.y * getVitesse());
+				dest.translate(pM.x, pM.y);
+
+				if (first) {
+					pointOptimal = dest;
+					first = false;
+				} else {
+					pointOptimal = new Point (
+							(pointOptimal.x + dest.x) / 2,
+							(pointOptimal.y + dest.y) / 2
+							);
+				}
+			}
+		}
+
+		if (first) { // si first est true, on a rencontré aucune menace ni aucune cible, donc on se dirige vers la potion le plus proche, ou on erre si 0
 			if (distance <= 2) {
 				a.ramasser(ve.getRef(), refPot, ve.getControleur().getArene());
 			} else {
 				d.seDirigerVers(refPot);
 			}
-		} else {
-			for (Integer i : ennemis.keySet()) {
-				Personnage current = (Personnage)ennemis.get(i).getControleur().getElement();
-
-				if (current.getForce() >= this.getCharisme() || current.getCharisme() > this.getCharisme()) {
-					// TODO Fuire cet ennemi
-					// il est dangereux pour notre santé, on a que 50% de chance de le convertir
-					// ou on ne pourra pas faire de coup d'état 
-
-
-					Point pM = ennemis.get(i).getPoint();
-					Point pE = ve.getPoint();
-
-					Point dest = new Point (
-							(pM.x < pE.x) ? -1 : 1,
-									(pM.y < pE.y) ? -1 : 1
-							);
-					dest.setLocation(dest.x * getVitesse(), dest.y * getVitesse());
-					dest.translate(pM.x, pM.y);
-
-					if (first) {
-						pointOptimal = dest;
-						first = false;
-					} else {
-						pointOptimal = new Point (
-								(pointOptimal.x + dest.x) / 2,
-								(pointOptimal.y + dest.y) / 2
-								);
-
-					}
-				} else {
-					// TODO Envisager un Free Hug
-
-					Point pM = ennemis.get(i).getPoint();
-					Point pE = ve.getPoint();
-
-					Point dest = new Point (
-							(pM.x < pE.x) ? 1 : -1,
-									(pM.y < pE.y) ? 1 : -1
-							);
-					dest.setLocation(dest.x * getVitesse(), dest.y * getVitesse());
-					dest.translate(pM.x, pM.y);
-
-					if (first) {
-						pointOptimal = dest;
-						first = false;
-					} else {
-						pointOptimal = new Point (
-								(pointOptimal.x + dest.x) / 2,
-								(pointOptimal.y + dest.y) / 2
-								);
-					}
-				}
-			}
-		}
-
-		if (first) {
+		} else { // on fuit ou on se deplace vers notre cible
 			d.seDirigerVers(pointOptimal);
-		} else {
-			d.seDirigerVers(0);
 		}
 	}
 }

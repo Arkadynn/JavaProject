@@ -10,8 +10,9 @@ import element.Potion;
  */
 public class DentsBlanches extends Potion {
 
-	public DentsBlanches() {
-		super("Dents Blances", -25, 100);
-	}
+	private static final long serialVersionUID = -4579204319165694516L;
 
+	public DentsBlanches(String nom) {
+		super(nom, -25, 50, 0, 0, 5);
+	}
 }

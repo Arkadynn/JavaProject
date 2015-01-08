@@ -9,8 +9,10 @@ import element.Potion;
  */
 public class Gonflette extends Potion {
 
-	public Gonflette() {
-		super("SuperFort",50,0);
+	private static final long serialVersionUID = 1817574549681894795L;
+
+	public Gonflette(String nom) {
+		super(nom, 50, 0, 0, 0, 0);
 	}
 
 }
