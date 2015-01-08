@@ -1,5 +1,6 @@
 package element.personnage;
 
+import interaction.Deplacements;
 import interfaceGraphique.VueElement;
 
 import java.rmi.RemoteException;
@@ -92,7 +93,7 @@ public class TeaPot extends Personnage {
 				
 			}
 		}
-		
-		
+		Deplacements d = new Deplacements(ve, voisins);
+		d.seDirigerVers(0);
 	}
 }
