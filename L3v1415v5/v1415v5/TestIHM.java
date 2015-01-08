@@ -11,7 +11,7 @@ public class TestIHM {
 			port = Integer.parseInt(args[0]);
 		}
 		
-		String ipArene = "localhost"; // par défaut, localhost
+		String ipArene = "172.28.112.180"; // par défaut, localhost
 		if (args.length > 1) { 
 			ipArene = args[1];
 		}

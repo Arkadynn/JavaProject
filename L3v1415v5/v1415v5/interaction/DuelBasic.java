@@ -72,8 +72,14 @@ public class DuelBasic implements IDuel {
 
 					int tauxCharisme = (int) (0.1 * defenseur.getElement().getCaract("charisme"));
 					
-					attaquant.getElement().setCharisme(attaquant.getElement().getCaract("charisme") + tauxCharisme);
-					defenseur.getElement().setCharisme(defenseur.getElement().getCaract("charisme") - tauxCharisme);
+					int attNewChar = Math.min(attaquant.getElement().getCaract("charisme") + tauxCharisme, 100);
+					Hashtable<String, Integer> carAtt = new Hashtable<String, Integer>();
+					carAtt.put("charisme", attNewChar);
+					attaquant.majCaractElement(carAtt);
+					
+					int defNewCar = Math.max(defenseur.getElement().getCaract("charisme") - tauxCharisme, 0);
+					Hashtable<String, Integer> carDef = new Hashtable<String, Integer>();
+					carDef.put("charisme", defNewCar);
 	
 					defenseur.changerLeader(attaquant);
 					attaquant.ajouterPersonnageEquipe(defenseur);
