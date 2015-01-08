@@ -37,36 +37,59 @@ public class TeaPot extends Personnage {
 			} else {
 				// TODO Traitement si c'est une potion
 				
-				for (String s : currentCaracs.keySet()) {
-					switch (s) {
-					case "defense":
-						if (currentCaracs.get(s) + getCaract(s) <= 60) {
-							// TODO potentiellement bon
+				
+				if (currentCaracs.get("vitesse") < 0) {
+					if (getCaract("vitesse") == 1) {
+//						 On ne veut pas être immobile
+						continue;
+					} else {
+						if (currentCaracs.get("force") + (currentCaracs.get("defense") * 10/6) + currentCaracs.get("vie") <= 90) {
+//							 La potion ne vaut pas le coup
+							continue;
 						} else {
-							// TODO forcement mauvais --> potentiellement kick
+							potions.put(i, current);
 						}
-						break;
-					case "vitesse":
-						if (currentCaracs.get(s) + getCaract(s) <= 4) {
-							// TODO potentiellement bon
-						} else {
-							// TODO forcement mauvais --> potentiellement kick
+					}
+				} else if (currentCaracs.get("vitesse") > 0) {
+//					 Semble être une bonne potion mais : 
+//					 en a t'on besoin
+					if (getCaract("vitesse") == 4) {
+//						Non
+						continue;
+					} else {
+//						Oui
+						if (currentCaracs.get("vie") < -20 && getCaract("vie") < 21) {
+//							La potion nous ferait mourrir
+							continue;
 						}
-						break;
-					case "vie":
-					case "force":
-					case "charisme":
-						if (currentCaracs.get(s) + getCaract(s) <= 100) {
-							// TODO potentiellement bon
-						} else {
-							// TODO forcement mauvais --> potentiellement kick
+						
+						if (currentCaracs.get("charisme") < -15) {
+//							on perdrait trop de charisme
+							continue;
 						}
-						break;
-					default:
-						System.err.println("Stat non reconnue pour cette potion : RMIID = " + i);	
+						
+						if (currentCaracs.get("force") + getCaract("force") <= -15) {
+//							potentiellement bon, puisque nous avons atténué les effets négatifs par notre absance de force
+							if (currentCaracs.get("charisme") + currentCaracs.get("defense") * 10/6 + currentCaracs.get("vie") < -30) {
+								// Trop de malus malgrès le malus compensé de force
+								continue;
+							}
+						}
+						
+						if ((currentCaracs.get("defense") + getCaract("defense"))*10/6 <= -15) {
+//							potentiellement bon, puisque nous avons atténué les effets négatifs par notre absance de force
+							if (currentCaracs.get("charisme") + currentCaracs.get("force") + currentCaracs.get("vie") < -30) {
+								// Trop de malus malgrès le malus compensé de force
+								continue;
+							}
+						}
+						
+						potions.put(i, current);
+						// TODO reprendre ici
 					}
 				}
-				potions.put(i, current);
+				
+				
 			}
 		}
 		
